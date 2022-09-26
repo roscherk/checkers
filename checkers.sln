@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "checkers", "checkers.csproj", "{D57F168E-5D76-45B9-9180-EA225D2601DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D57F168E-5D76-45B9-9180-EA225D2601DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D57F168E-5D76-45B9-9180-EA225D2601DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D57F168E-5D76-45B9-9180-EA225D2601DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D57F168E-5D76-45B9-9180-EA225D2601DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
