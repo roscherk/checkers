@@ -10,28 +10,9 @@
             BorderBrush="Black"
             BorderThickness="2"
             CornerRadius="3">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-            </Grid.ColumnDefinitions>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-            </Grid.RowDefinitions>
+        <Grid x:Name="Field"
+              ColumnDefinitions="100,100,100,100,100,100,100,100"
+              RowDefinitions="100,100,100,100,100,100,100,100">
 
             <Border Grid.Row="0" Grid.Column="1" Background="Brown" />
             <Border Grid.Row="0" Grid.Column="3" Background="Brown" />
@@ -65,7 +46,8 @@
             <Border Grid.Row="7" Grid.Column="2" Background="Brown" />
             <Border Grid.Row="7" Grid.Column="4" Background="Brown" />
             <Border Grid.Row="7" Grid.Column="6" Background="Brown" />
-            
+            <Image Grid.Row="0" Grid.Column="0" Source="Assets/sprite_black.png" PointerMoved="InputElement_OnPointerMoved"/>
+            <Image Grid.Row="0" Grid.Column="1" Source="Assets/sprite_white.png" />
         </Grid>
     </Border>
 </Window>
