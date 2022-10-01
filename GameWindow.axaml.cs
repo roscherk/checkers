@@ -8,6 +8,7 @@ namespace checkers;
 
 public partial class GameWindow : Window
 {
+    private RelativePanel _field = null!;
     public GameWindow()
     {
         InitializeComponent();
@@ -17,7 +18,9 @@ public partial class GameWindow : Window
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
-        DragDrop.SetAllowDrop(this, true);
+        _field = this.Find<RelativePanel>("Field");
+        DragDrop.SetAllowDrop(_field, true);
+        Console.WriteLine(_field.Bounds.Size);
     }
 
     private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
@@ -28,12 +31,10 @@ public partial class GameWindow : Window
     private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
     {
         var image = (Image)sender!;
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            var obj = new DataObject();
-            obj.Set("", image);
-            DragDrop.DoDragDrop(e, obj, DragDropEffects.Move);
-        }
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+        var obj = new DataObject();
+        obj.Set("", image);
+        DragDrop.DoDragDrop(e, obj, DragDropEffects.Move);
     }
 
     private void Drop(object? sender, DragEventArgs e)
