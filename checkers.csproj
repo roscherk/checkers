@@ -9,6 +9,7 @@
     </PropertyGroup>
     <ItemGroup>
         <None Remove=".gitignore" />
+        <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
     <ItemGroup>
         <!--This helps with theme dll-s trimming.
