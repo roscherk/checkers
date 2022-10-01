@@ -5,67 +5,34 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="checkers.GameWindow"
         Title="GameWindow">
-    <Border HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            BorderBrush="Black"
+    <Border BorderBrush="Black"
             BorderThickness="2"
             CornerRadius="3">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-            </Grid.ColumnDefinitions>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="100" />
-            </Grid.RowDefinitions>
-
-            <Border Grid.Row="0" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="0" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="0" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="0" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="6" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="6" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="6" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="6" Background="Brown" />
+        <RelativePanel
+            x:Name="Field"
+            Background="Green"
+            Height="800"
+            Width="800"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <Rectangle x:Name="S00" Fill="White" Height="100" Width="100"/>
+            <Rectangle x:Name="S01" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S00"/>
+            <Rectangle x:Name="S02" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S01"/>
+            <Rectangle x:Name="S03" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S02"/>
+            <Rectangle x:Name="S04" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S03"/>
+            <Rectangle x:Name="S05" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S04"/>
+            <Rectangle x:Name="S06" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S05"/>
+            <Rectangle x:Name="S07" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S06"/>
             
-        </Grid>
+            <Rectangle x:Name="S10" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S00"/>
+            <Rectangle x:Name="S11" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S10" RelativePanel.Below="S01"/>
+            <Rectangle x:Name="S12" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S11" RelativePanel.Below="S02"/>
+            <Rectangle x:Name="S13" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S12" RelativePanel.Below="S03"/>
+            <Rectangle x:Name="S14" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S13" RelativePanel.Below="S04"/>
+            <Rectangle x:Name="S15" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S14" RelativePanel.Below="S05"/>
+            <Rectangle x:Name="S16" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S15" RelativePanel.Below="S06"/>
+            <Rectangle x:Name="S17" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S16" RelativePanel.Below="S07"/>
+            
+        </RelativePanel>
     </Border>
 </Window>
