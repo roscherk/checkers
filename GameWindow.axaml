@@ -13,41 +13,41 @@
         <Grid x:Name="Field"
               ColumnDefinitions="100,100,100,100,100,100,100,100"
               RowDefinitions="100,100,100,100,100,100,100,100">
-
-            <Border Grid.Row="0" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="0" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="0" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="0" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="1" Grid.Column="6" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="2" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="3" Grid.Column="6" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="4" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="5" Grid.Column="6" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="1" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="3" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="5" Background="Brown" />
-            <Border Grid.Row="6" Grid.Column="7" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="0" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="2" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="4" Background="Brown" />
-            <Border Grid.Row="7" Grid.Column="6" Background="Brown" />
-            <Image Grid.Row="0" Grid.Column="0" Source="Assets/sprite_black.png" PointerMoved="InputElement_OnPointerMoved"/>
-            <Image Grid.Row="0" Grid.Column="1" Source="Assets/sprite_white.png" />
+        
+        <!--     <Border Grid.Row="0" Grid.Column="1" Background="Brown" /> -->
+        <!--     <Border Grid.Row="0" Grid.Column="3" Background="Brown" /> -->
+        <!--     <Border Grid.Row="0" Grid.Column="5" Background="Brown" /> -->
+        <!--     <Border Grid.Row="0" Grid.Column="7" Background="Brown" /> -->
+        <!--     <Border Grid.Row="1" Grid.Column="0" Background="Brown" /> -->
+        <!--     <Border Grid.Row="1" Grid.Column="2" Background="Brown" /> -->
+        <!--     <Border Grid.Row="1" Grid.Column="4" Background="Brown" /> -->
+        <!--     <Border Grid.Row="1" Grid.Column="6" Background="Brown" /> -->
+        <!--     <Border Grid.Row="2" Grid.Column="1" Background="Brown" /> -->
+        <!--     <Border Grid.Row="2" Grid.Column="3" Background="Brown" /> -->
+        <!--     <Border Grid.Row="2" Grid.Column="5" Background="Brown" /> -->
+        <!--     <Border Grid.Row="2" Grid.Column="7" Background="Brown" /> -->
+        <!--     <Border Grid.Row="3" Grid.Column="0" Background="Brown" /> -->
+        <!--     <Border Grid.Row="3" Grid.Column="2" Background="Brown" /> -->
+        <!--     <Border Grid.Row="3" Grid.Column="4" Background="Brown" /> -->
+        <!--     <Border Grid.Row="3" Grid.Column="6" Background="Brown" /> -->
+        <!--     <Border Grid.Row="4" Grid.Column="1" Background="Brown" /> -->
+        <!--     <Border Grid.Row="4" Grid.Column="3" Background="Brown" /> -->
+        <!--     <Border Grid.Row="4" Grid.Column="5" Background="Brown" /> -->
+        <!--     <Border Grid.Row="4" Grid.Column="7" Background="Brown" /> -->
+        <!--     <Border Grid.Row="5" Grid.Column="0" Background="Brown" /> -->
+        <!--     <Border Grid.Row="5" Grid.Column="2" Background="Brown" /> -->
+        <!--     <Border Grid.Row="5" Grid.Column="4" Background="Brown" /> -->
+        <!--     <Border Grid.Row="5" Grid.Column="6" Background="Brown" /> -->
+        <!--     <Border Grid.Row="6" Grid.Column="1" Background="Brown" /> -->
+        <!--     <Border Grid.Row="6" Grid.Column="3" Background="Brown" /> -->
+        <!--     <Border Grid.Row="6" Grid.Column="5" Background="Brown" /> -->
+        <!--     <Border Grid.Row="6" Grid.Column="7" Background="Brown" /> -->
+        <!--     <Border Grid.Row="7" Grid.Column="0" Background="Brown" /> -->
+        <!--     <Border Grid.Row="7" Grid.Column="2" Background="Brown" /> -->
+        <!--     <Border Grid.Row="7" Grid.Column="4" Background="Brown" /> -->
+        <!--     <Border Grid.Row="7" Grid.Column="6" Background="Brown" /> -->
+        <!-- <Image Grid.Row="0" Grid.Column="0" Source="Assets/sprite_black.png" PointerMoved="InputElement_OnPointerMoved"/> -->
+        <!--     <Image Grid.Row="0" Grid.Column="1" Source="Assets/sprite_white.png" /> -->
         </Grid>
     </Border>
 </Window>
