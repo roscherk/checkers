@@ -108,7 +108,7 @@ public partial class GameWindow : Window
     private void DragOver(object? sender, DragEventArgs e)
     {
         var currentPosition = e.GetPosition(_canvas);
-        var (piece, (startRow, startColumn)) =
+        var (piece, _) = 
             (KeyValuePair<Image, KeyValuePair<int, int>>)e.Data.Get("KeyValuePair<Image, KeyValuePair<int, int>>")!;
         piece.IsVisible = false;
         var draggable = (Image)_canvas.Children[1];
@@ -119,23 +119,22 @@ public partial class GameWindow : Window
 
     private void DragDrop(object? sender, DragEventArgs e)
     {
-        _canvas.Children.RemoveRange(1, _canvas.Children.Count - 1);
-        Console.WriteLine("DragEnd ");
-        if (!e.Source!.ToString()!.EndsWith("Border")) return;
-        var square = (Border)e.Source!;
-        Console.WriteLine($"Drop: {square.Name}");
-
+        _canvas.Children.RemoveRange(1, _canvas.Children.Count - 1);  // remove draggable
         var (piece, (startRow, startColumn)) =
             (KeyValuePair<Image, KeyValuePair<int, int>>)e.Data.Get("KeyValuePair<Image, KeyValuePair<int, int>>")!;
-        var finishRow = square.Name![1] - '0';
-        var finishColumn = square.Name[2] - '0';
-
+        var finishRow = (int)e.GetPosition(_field).Y / 100;
+        var finishColumn = (int)e.GetPosition(_field).X / 100;
+        piece.IsVisible = true;
         // checking if the move is legal
-        Console.WriteLine($"startRow = {startRow}, finishRow = {finishRow}");
-        Console.WriteLine($"startColumn = {startColumn}, finishColumn = {finishColumn}");
-        if ((finishRow + finishColumn) % 2 == 0
+        if (!e.Source!.ToString()!.EndsWith("Border")
+            || finishRow == startRow
+            || finishColumn == startColumn
+            || (finishRow + finishColumn) % 2 == 0
             || (_toMove == "W" && (finishRow > startRow || finishRow < startRow - 2))
             || (_toMove == "B" && (finishRow < startRow || finishRow > startRow + 2))) return;
+        // Console.WriteLine($"startRow = {startRow}, finishRow = {finishRow}");
+        // Console.WriteLine($"startColumn = {startColumn}, finishColumn = {finishColumn}");
+        
         Image? toCapture = null; // checking whether we can capture somebody on this move
         if (finishColumn == startColumn - 2)
         {
@@ -149,7 +148,6 @@ public partial class GameWindow : Window
                 ? GetPiece(finishRow + 1, finishColumn - 1)
                 : GetPiece(finishRow - 1, finishColumn - 1);
         }
-
         if (toCapture != null)
         {
             _field.Children.Remove(toCapture);
@@ -158,10 +156,9 @@ public partial class GameWindow : Window
         _field.Children.Remove(piece);
         Grid.SetRow(piece, finishRow);
         Grid.SetColumn(piece, finishColumn);
-        piece.IsVisible = true;
         _field.Children.Add(piece);
         _toMove = _toMove == "W" ? "B" : "W";
-
+        Console.WriteLine($"DragEnd, droped: Row {finishRow} Column {finishColumn}");
     }
     private Image? GetPiece(int row, int column)
     {
