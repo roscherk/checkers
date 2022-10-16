@@ -5,88 +5,18 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="checkers.GameWindow"
         Title="GameWindow">
-    <Border BorderBrush="Black"
-            BorderThickness="2"
-            CornerRadius="3"
-            Padding="0"
-            x:Name="Border">
-        <RelativePanel
-            x:Name="Field"
-            Height="800"
-            Width="800"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-            <Rectangle x:Name="S00" Fill="White" Height="100" Width="100"/>
-            <Rectangle x:Name="S01" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S00"/>
-            <Rectangle x:Name="S02" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S01"/>
-            <Rectangle x:Name="S03" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S02"/>
-            <Rectangle x:Name="S04" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S03"/>
-            <Rectangle x:Name="S05" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S04"/>
-            <Rectangle x:Name="S06" Fill="White" Height="100" Width="100" RelativePanel.RightOf="S05"/>
-            <Rectangle x:Name="S07" Fill="Brown" Height="100" Width="100" RelativePanel.RightOf="S06"/>
-            
-            <Rectangle x:Name="S10" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S00"/>
-            <Rectangle x:Name="S11" Fill="White" Height="100" Width="100" RelativePanel.Below="S01" RelativePanel.RightOf="S10"/>
-            <Rectangle x:Name="S12" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S02" RelativePanel.RightOf="S11"/>
-            <Rectangle x:Name="S13" Fill="White" Height="100" Width="100" RelativePanel.Below="S03" RelativePanel.RightOf="S12"/>
-            <Rectangle x:Name="S14" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S04" RelativePanel.RightOf="S13"/>
-            <Rectangle x:Name="S15" Fill="White" Height="100" Width="100" RelativePanel.Below="S05" RelativePanel.RightOf="S14"/>
-            <Rectangle x:Name="S16" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S06" RelativePanel.RightOf="S15"/>
-            <Rectangle x:Name="S17" Fill="White" Height="100" Width="100" RelativePanel.Below="S07" RelativePanel.RightOf="S16"/>
-            
-            <Rectangle x:Name="S20" Fill="White" Height="100" Width="100" RelativePanel.Below="S10"/>
-            <Rectangle x:Name="S21" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S11" RelativePanel.RightOf="S20"/>
-            <Rectangle x:Name="S22" Fill="White" Height="100" Width="100" RelativePanel.Below="S12" RelativePanel.RightOf="S21"/>
-            <Rectangle x:Name="S23" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S13" RelativePanel.RightOf="S22"/>
-            <Rectangle x:Name="S24" Fill="White" Height="100" Width="100" RelativePanel.Below="S14" RelativePanel.RightOf="S23"/>
-            <Rectangle x:Name="S25" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S15" RelativePanel.RightOf="S24"/>
-            <Rectangle x:Name="S26" Fill="White" Height="100" Width="100" RelativePanel.Below="S16" RelativePanel.RightOf="S25"/>
-            <Rectangle x:Name="S27" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S17" RelativePanel.RightOf="S26"/>
-            
-            <Rectangle x:Name="S30" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S20"/>
-            <Rectangle x:Name="S31" Fill="White" Height="100" Width="100" RelativePanel.Below="S21" RelativePanel.RightOf="S30"/>
-            <Rectangle x:Name="S32" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S22" RelativePanel.RightOf="S31"/>
-            <Rectangle x:Name="S33" Fill="White" Height="100" Width="100" RelativePanel.Below="S23" RelativePanel.RightOf="S32"/>
-            <Rectangle x:Name="S34" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S24" RelativePanel.RightOf="S33"/>
-            <Rectangle x:Name="S35" Fill="White" Height="100" Width="100" RelativePanel.Below="S25" RelativePanel.RightOf="S34"/>
-            <Rectangle x:Name="S36" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S26" RelativePanel.RightOf="S35"/>
-            <Rectangle x:Name="S37" Fill="White" Height="100" Width="100" RelativePanel.Below="S27" RelativePanel.RightOf="S36"/>
-            
-            <Rectangle x:Name="S40" Fill="White" Height="100" Width="100" RelativePanel.Below="S30"/>
-            <Rectangle x:Name="S41" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S31" RelativePanel.RightOf="S40"/>
-            <Rectangle x:Name="S42" Fill="White" Height="100" Width="100" RelativePanel.Below="S32" RelativePanel.RightOf="S41"/>
-            <Rectangle x:Name="S43" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S33" RelativePanel.RightOf="S42"/>
-            <Rectangle x:Name="S44" Fill="White" Height="100" Width="100" RelativePanel.Below="S34" RelativePanel.RightOf="S43"/>
-            <Rectangle x:Name="S45" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S35" RelativePanel.RightOf="S44"/>
-            <Rectangle x:Name="S46" Fill="White" Height="100" Width="100" RelativePanel.Below="S36" RelativePanel.RightOf="S45"/>
-            <Rectangle x:Name="S47" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S37" RelativePanel.RightOf="S46"/>
-            
-            <Rectangle x:Name="S50" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S40"/>
-            <Rectangle x:Name="S51" Fill="White" Height="100" Width="100" RelativePanel.Below="S41" RelativePanel.RightOf="S50"/>
-            <Rectangle x:Name="S52" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S42" RelativePanel.RightOf="S51"/>
-            <Rectangle x:Name="S53" Fill="White" Height="100" Width="100" RelativePanel.Below="S43" RelativePanel.RightOf="S52"/>
-            <Rectangle x:Name="S54" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S44" RelativePanel.RightOf="S53"/>
-            <Rectangle x:Name="S55" Fill="White" Height="100" Width="100" RelativePanel.Below="S45" RelativePanel.RightOf="S54"/>
-            <Rectangle x:Name="S56" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S46" RelativePanel.RightOf="S55"/>
-            <Rectangle x:Name="S57" Fill="White" Height="100" Width="100" RelativePanel.Below="S47" RelativePanel.RightOf="S56"/>
-            
-            <Rectangle x:Name="S60" Fill="White" Height="100" Width="100" RelativePanel.Below="S50"/>
-            <Rectangle x:Name="S61" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S51" RelativePanel.RightOf="S60"/>
-            <Rectangle x:Name="S62" Fill="White" Height="100" Width="100" RelativePanel.Below="S52" RelativePanel.RightOf="S61"/>
-            <Rectangle x:Name="S63" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S53" RelativePanel.RightOf="S62"/>
-            <Rectangle x:Name="S64" Fill="White" Height="100" Width="100" RelativePanel.Below="S54" RelativePanel.RightOf="S63"/>
-            <Rectangle x:Name="S65" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S55" RelativePanel.RightOf="S64"/>
-            <Rectangle x:Name="S66" Fill="White" Height="100" Width="100" RelativePanel.Below="S56" RelativePanel.RightOf="S65"/>
-            <Rectangle x:Name="S67" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S57" RelativePanel.RightOf="S66"/>
-            
-            <Rectangle x:Name="S70" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S60"/>
-            <Rectangle x:Name="S71" Fill="White" Height="100" Width="100" RelativePanel.Below="S61" RelativePanel.RightOf="S70"/>
-            <Rectangle x:Name="S72" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S62" RelativePanel.RightOf="S71"/>
-            <Rectangle x:Name="S73" Fill="White" Height="100" Width="100" RelativePanel.Below="S63" RelativePanel.RightOf="S72"/>
-            <Rectangle x:Name="S74" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S64" RelativePanel.RightOf="S73"/>
-            <Rectangle x:Name="S75" Fill="White" Height="100" Width="100" RelativePanel.Below="S65" RelativePanel.RightOf="S74"/>
-            <Rectangle x:Name="S76" Fill="Brown" Height="100" Width="100" RelativePanel.Below="S66" RelativePanel.RightOf="S75"/>
-            <Rectangle x:Name="S77" Fill="White" Height="100" Width="100" RelativePanel.Below="S67" RelativePanel.RightOf="S76"/>
-        </RelativePanel>
-    </Border>
+    <Canvas x:Name="CanvasDrag"
+            Margin="250,30">
+        <Border HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                BorderBrush="Black"
+                BorderThickness="2"
+                CornerRadius="3">
+            <Grid x:Name="Field"
+                  ColumnDefinitions="100,100,100,100,100,100,100,100"
+                  RowDefinitions="100,100,100,100,100,100,100,100">
+            </Grid>
+        </Border>
+    </Canvas>
+    
 </Window>
