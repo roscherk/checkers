@@ -28,6 +28,7 @@ public partial class GameWindow : Window
 
     private void InitializeComponent()
     {
+        AvaloniaXamlLoader.Load(this);
         _canvas = this.Find<Canvas>("CanvasDrag");
         _fieldImage = this.Find<Grid>("Field");
         _fieldImage.AddHandler(Avalonia.Input.DragDrop.DropEvent, DragDrop);
@@ -64,7 +65,6 @@ public partial class GameWindow : Window
         }
 
         Avalonia.Input.DragDrop.SetAllowDrop(_fieldImage, true);
-        AvaloniaXamlLoader.Load(this);
     }
 
     private async void DragStart(object? sender, PointerPressedEventArgs e)
@@ -131,22 +131,12 @@ public partial class GameWindow : Window
         // Console.WriteLine($"startColumn = {startColumn}, finishColumn = {finishColumn}");
         
         // handle capturing
-        // Image? toCapture = null;
-        // if (finishColumn == startColumn - 2)
-        // {
-        //     toCapture = _toMove == "W" ? GetPiece(finishRow + 1, finishColumn + 1)
-        //         : GetPiece(finishRow - 1, finishColumn + 1);
-        // }
-        // else if (finishColumn == startColumn + 2)
-        // {
-        //     toCapture = _toMove == "W" ? GetPiece(finishRow + 1, finishColumn - 1)
-        //         : GetPiece(finishRow - 1, finishColumn - 1);
-        // }
-        //
-        // if (toCapture != null)
-        // {
-        //     _fieldImage.Children.Remove(toCapture);
-        // }
+        Image? toCapture = null;
+        
+        if (toCapture != null)
+        {
+            _fieldImage.Children.Remove(toCapture);
+        }
         
         // change the piece position
         _fieldImage.Children.Remove(piece);
