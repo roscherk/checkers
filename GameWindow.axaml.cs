@@ -1,16 +1,14 @@
 using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
-
 using Bitmap = Avalonia.Media.Imaging.Bitmap;
 using Image = Avalonia.Controls.Image;
 
 namespace checkers;
-
-
 
 public partial class GameWindow : Window
 {
@@ -34,7 +32,7 @@ public partial class GameWindow : Window
         _fieldImage.AddHandler(Avalonia.Input.DragDrop.DropEvent, DragDrop);
         _fieldImage.AddHandler(Avalonia.Input.DragDrop.DragOverEvent, DragOver);
 
-        // render the field image
+        // отрисовываем поле
         for (var i = 0; i < FieldHeight; ++i)
         {
             for (var j = 0; j < FieldWidth; ++j)
@@ -50,19 +48,20 @@ public partial class GameWindow : Window
             }
         }
 
-        // fill the field with the pieces
+        // заполняем поле фигурами
         foreach (var piece in _game.GetPieces())
         {
             var pieceImage = new Image
             {
                 Source = new Bitmap(
-                    $"/home/heapof/CLionProjects/checkers/Assets/sprite_{(piece.PieceColor == Game.Color.White ? "white" : "black")}.png"),
+                    $"../../../Assets/sprite_{(piece.PieceColor == Game.Color.White ? "white" : "black")}.png"),
             };
             pieceImage.PointerPressed += DragStart;
-            Grid.SetRow(pieceImage, piece.OccupiedCell.X);
-            Grid.SetColumn(pieceImage, piece.OccupiedCell.Y);
+            Grid.SetRow(pieceImage, piece.X);
+            Grid.SetColumn(pieceImage, piece.Y);
             _fieldImage.Children.Add(pieceImage);
         }
+        _game.UpdateMoves();  // сразу задаём возможные ходы для белых
 
         Avalonia.Input.DragDrop.SetAllowDrop(_fieldImage, true);
     }
@@ -74,25 +73,25 @@ public partial class GameWindow : Window
             (gameStatus != Game.GameStatus.BlackMove &&
              gameStatus != Game.GameStatus.WhiteMove)) return;
         var piece = (Image)sender!;
-        if (piece.Name!.StartsWith("W") && gameStatus != Game.GameStatus.WhiteMove
-            || piece.Name.StartsWith("B") && gameStatus != Game.GameStatus.BlackMove) return;  // player can move their pieces only
 
-        _game.UpdateMoves();
-        
         var row = (int)e.GetPosition(_fieldImage).Y / 100;
         var column = (int)e.GetPosition(_fieldImage).X / 100;
-        var linkedPiece = _game.GetCell(row, column).LinkedPiece ?? new Game.Piece(new Game.Cell(0, 0), Game.Color.Black);
+        var linkedPiece = _game.GetCell(row, column).LinkedPiece ??
+                          new Game.Piece(0, 0, Game.Color.Black);
+        if ((int)linkedPiece.PieceColor != (int)_game.GetStatus()) return;
+        
         if (!_game.LegalMoves.ContainsKey(linkedPiece))
         {
             //TODO: добавить анимацию, показывающую невозможность хода
             return;
         }
         
-        // start dragging
+        // начинаем перетаскивание
         var draggable = new Image
         {
             Name = gameStatus == Game.GameStatus.WhiteMove ? "Wdrag" : "Bdrag",
-            Source = new Bitmap($"/home/heapof/CLionProjects/checkers/Assets/sprite_{(gameStatus == Game.GameStatus.WhiteMove ? "white" : "black")}.png"),
+            Source = new Bitmap(
+                $"../../../Assets/sprite_{(gameStatus == Game.GameStatus.WhiteMove ? "white" : "black")}{(linkedPiece.King ? "_king" : "")}.png"),
             Height = 100,
             Width = 100,
             IsEnabled = false,
@@ -119,103 +118,60 @@ public partial class GameWindow : Window
     private void DragDrop(object? sender, DragEventArgs e)
     {
         _canvas.Children.RemoveRange(1, _canvas.Children.Count - 1); // remove draggable
-        var (piece, linkedPiece) =
-            (Pair<Image, Game.Piece>)e.Data.Get("Pair<Image image, Game.Piece piece>")!;
-        var finishRow = (int)e.GetPosition(_fieldImage).Y / 100;
-        var finishColumn = (int)e.GetPosition(_fieldImage).X / 100;
+        var (piece, linkedPiece) = (Pair<Image, Game.Piece>)e.Data.Get("Pair<Image image, Game.Piece piece>")!;
+        var finishX = (int)e.GetPosition(_fieldImage).Y / 100;
+        var finishY = (int)e.GetPosition(_fieldImage).X / 100;
         piece.IsVisible = true;
-        // checking if the move is legal
-        if (!e.Source!.ToString()!.EndsWith("Border")
-            || _game.LegalMoves[linkedPiece].Contains(new Game.Cell(finishRow, finishColumn))) return;
-        // Console.WriteLine($"startRow = {startRow}, finishRow = {finishRow}");
-        // Console.WriteLine($"startColumn = {startColumn}, finishColumn = {finishColumn}");
-        
-        // handle capturing
-        Image? toCapture = null;
-        
+        // проверяем, что ход возможен
+        if (!_game.LegalMoves[linkedPiece].Keys.Contains(_game.GetCell(finishX, finishY))) return;
+
+        // обрабатываем взятие
+        var toCapture = _game.LegalMoves[linkedPiece][_game.GetCell(finishX, finishY)];
         if (toCapture != null)
         {
-            _fieldImage.Children.Remove(toCapture);
+            _fieldImage.Children.Remove(GetPieceImage(toCapture));
+            _game.GetCell(toCapture.X, toCapture.Y).LinkedPiece = null;
+            _game.GetPieces().Remove(toCapture);
         }
         
-        // change the piece position
+        // меняем координаты шашки в массиве
+        _game.GetCell(linkedPiece.X, linkedPiece.Y).LinkedPiece = null;
+        (linkedPiece.X, linkedPiece.Y) = (finishX, finishY);
+        _game.GetCell(finishX, finishY).LinkedPiece = linkedPiece;
+
+        // меняем положение шашки на экране
         _fieldImage.Children.Remove(piece);
-        Grid.SetRow(piece, finishRow);
-        Grid.SetColumn(piece, finishColumn);
+        Grid.SetRow(piece, finishX);
+        Grid.SetColumn(piece, finishY);
         _fieldImage.Children.Add(piece);
-        
-        // if no follow-up is available, pass the move
-        // if there is a follow-up, continue the move
-        // generate possible moves
-        Console.WriteLine($"DragEnd, droped: Row {finishRow} Column {finishColumn}");
+        // если дошли до последней горизонтали, становимся дамкой
+        if ((linkedPiece.X == 0 && linkedPiece.PieceColor == Game.Color.White)
+            || (linkedPiece.X == FieldHeight - 1 && linkedPiece.PieceColor == Game.Color.Black))
+        {
+            linkedPiece.King = true;
+            GetPieceImage(linkedPiece)!.Source =
+                new Bitmap($"../../../Assets/sprite_{(linkedPiece.PieceColor == Game.Color.White ? "white" : "black")}_king.png");
+        }
+
+        //TODO: проверить, есть ли продолжение взятия
+        if (toCapture != null)  // если взяли на этом ходу, нужно проверить, есть ли продолжение взятия
+        {
+            _game.UpdateMoves();
+            if (_game.LegalMoves.ContainsKey(linkedPiece)
+                && _game.LegalMoves[linkedPiece].Any(move => move.Value != null)) return;
+        }
+        // если продолжения нету, передаём ход
+        _game.PassTheMove();
+        _game.UpdateMoves();
+
+        Console.WriteLine($"DragEnd, droped: Row {finishX} Column {finishY}");
     }
 
-    // private void UpdateMoves(Pair<int, int>? followUp=null)
-    // {
-    //     _possibleMoves.Clear();
-    //     if (followUp != null)
-    //     {
-    //         return;
-    //     }
-    //
-    //     for (var i = 1; i < 9; ++i)
-    //     {
-    //         for (var j = 1; j < 9; ++j)
-    //         {
-    //             if (_field[i][j] != _toMove)
-    //             {
-    //                 continue;
-    //             }
-    //
-    //             var coordinates = new Pair<int, int>(i, j);
-    //             _possibleMoves.Add(coordinates, new List<Pair<int, int>>());
-    //             if (_field[i - 1][j - 1] != _toMove)
-    //             {
-    //                 _possibleMoves[coordinates].Add(new Pair<int, int>(i - 2, j - 2));
-    //             }
-    //             if (_field[i - 1][j + 1] != _toMove)
-    //             {
-    //                 _possibleMoves[coordinates].Add(new Pair<int, int>(i - 2, j + 2));
-    //             }
-    //             if (_field[i + 1][j - 1] != _toMove)
-    //             {
-    //                 _possibleMoves[coordinates].Add(new Pair<int, int>(i + 2, j - 2));
-    //             }
-    //             if (_field[i + 1][j + 1] != _toMove)
-    //             {
-    //                 _possibleMoves[coordinates].Add(new Pair<int, int>(i + 2, j + 2));
-    //             }
-    //             
-    //             foreach (var move in new List<Pair<int, int>>(_possibleMoves[coordinates]))
-    //             {
-    //                 if (move.First is < 1 or > 8 || move.Second is < 1 or > 8)
-    //                 {
-    //                     _possibleMoves[coordinates].Remove(move);
-    //                 }
-    //             }
-    //
-    //             if (_possibleMoves[coordinates].Count == 0)
-    //             {
-    //                 if (_toMove == "W")
-    //                 {
-    //                     _possibleMoves[coordinates].Add(new Pair<int, int>(i - 1, j - 1));
-    //                     _possibleMoves[coordinates].Add(new Pair<int, int>(i - 1, j + 1));
-    //                 }
-    //                 else
-    //                 {
-    //                     _possibleMoves[coordinates].Add(new Pair<int, int>(i + 1, j - 1));
-    //                     _possibleMoves[coordinates].Add(new Pair<int, int>(i + 1, j + 1));
-    //                 }
-    //             }
-    //
-    //             foreach (var move in new List<Pair<int, int>>(_possibleMoves[coordinates]))
-    //             {
-    //                 if (move.First is < 1 or > 8 || move.Second is < 1 or > 8)
-    //                 {
-    //                     _possibleMoves[coordinates].Remove(move);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    private Image? GetPieceImage(Game.Piece piece)
+    {
+        return (from element in _fieldImage.Children
+            where !element.ToString()!.EndsWith("Border")
+            select (Image)element).FirstOrDefault(pieceImage =>
+            Grid.GetRow(pieceImage) == piece.X && Grid.GetColumn(pieceImage) == piece.Y);
+    }
 }

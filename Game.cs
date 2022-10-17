@@ -29,14 +29,16 @@ public class Game
 
     public class Piece
     {
-        public Piece(Cell occupiedCell, Color pieceColor, bool king = false)
+        public Piece(int x, int y, Color pieceColor, bool king = false)
         {
-            OccupiedCell = occupiedCell;
+            X = x;
+            Y = y;
             PieceColor = pieceColor;
             King = king;
         }
 
-        public Cell OccupiedCell { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
         public Color PieceColor { get; private set; }
         public bool King { get; set; }
     }
@@ -50,7 +52,7 @@ public class Game
         Draw
     }
 
-    public Dictionary<Piece, List<Cell>> LegalMoves = new Dictionary<Piece, List<Cell>>();
+    public Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves = new Dictionary<Piece, Dictionary<Cell, Piece?>>();
     private readonly List<List<Cell>> _field = new List<List<Cell>>();
     private readonly List<Piece> _pieces = new List<Piece>();
     private readonly int _height;
@@ -67,16 +69,8 @@ public class Game
             for (var j = 0; j < _width; ++j)
             {
                 _field[i].Add(new Cell(i, j));
-                if (_field[i][j].CellColor != Color.Black) continue;
-                switch (i)
-                {
-                    case <= 2:
-                        _pieces.Add(new Piece(_field[i][j], Color.Black));
-                        break;
-                    case >= 5:
-                        _pieces.Add(new Piece(_field[i][j], Color.White));
-                        break;
-                }
+                if (_field[i][j].CellColor != Color.Black || i is > 2 and < 5) continue;
+                _pieces.Add(new Piece(i, j, i <= 2 ? Color.Black : Color.White));
                 _field[i][j].LinkedPiece = _pieces[^1];
             }
         }
@@ -84,7 +78,7 @@ public class Game
 
     public List<Piece> GetPieces()
     {
-        return _pieces.ToList();
+        return _pieces;
     }
 
     public Cell GetCell(int x, int y)
@@ -102,76 +96,101 @@ public class Game
         _gameStatus = _gameStatus == GameStatus.WhiteMove ? GameStatus.BlackMove : GameStatus.WhiteMove;
     }
 
-    private List<Cell> GetAvailableMoves(Piece piece)
+    private Dictionary<Cell, Piece?> GetAvailableMoves(Piece piece)
     {
-        var result = new List<Cell>();
-        var x = piece.OccupiedCell.X;
-        var y = piece.OccupiedCell.Y;
-        var k = 1;
+        var result = new Dictionary<Cell, Piece?>();
+        var x = piece.X;
+        var y = piece.Y;
         
-        foreach (var i in new List<int> { -1, 1 })
+        foreach (var i in new List<int> { -1, 1 })  // задаёт направление хода: -1 -- вверх, 1 -- вниз
         {
-            if (!piece.King && piece.PieceColor == Color.Black)
-            {
-                continue;
-            }
+            // if (piece.PieceColor == Color.Black && i == -1 && !piece.King)
+            // {
+            //     continue;
+            // }
             
-            foreach (var j in new List<int> { -1, 1 })
+            foreach (var j in new List<int> { -1, 1 })  // задаёт направление хода: -1 -- влево, 1 -- вправо
             {
+                var k = 1;  // перебираем количество клеток, на которое можем пойти в выбранном направлении
                 while (x + k * i >= 0 && x + k * i < _height && y + k * j >= 0 && y + k * j < _width)
                 {
                     if (_field[x + k*i][y + k*j].LinkedPiece == null)
                     {
-                        result.Add(_field[x + k*i][y + k*j]);
-                    } else if (x + (k + 1)*i >= 0 && x + (k + 1)*i < _height &&
-                               y + (k + 1)*j >= 0 && y + (k + 1)*j < _width)
+                        // если клетка пустая, мы можем на неё сходить
+                        if (piece.King
+                            || (piece.PieceColor == Color.White && i == -1)
+                            || (piece.PieceColor == Color.Black && i == 1))
+                        {
+                            result.Add(_field[x + k*i][y + k*j], null);
+                        }
+                    } else if (_field[x + k*i][y + k*j].LinkedPiece!.PieceColor != piece.PieceColor)
                     {
-                        result.Add(_field[x + (k + 1)*i][y + (k + 1)*j]);
+                        var t = 1;  // перебираем возможные варианты взятия
+                        //TODO: пофиксить баг со взятием только в одну сторону
+                        while (x + (k + t) * i >= 0 
+                               && x + (k + t) * i < _height
+                               && y + (k + t) * j >= 0
+                               && y + (k + t) * j < _width 
+                               && _field[x + (k + t) * i][y + (k + t) * j].LinkedPiece == null)
+                        {
+                            t += 1;
+                        }
+
+                        t -= 1;  // последняя свободная клетка, в которую ещё можем попасть после взятия
+                        for (var m = 1; m <= t; ++m)
+                        {
+                            result.Add(_field[x + (k + m)*i][y + (k + m)*j], _field[x + k*i][y + k*j].LinkedPiece);
+                            if (!piece.King)
+                            {
+                                break;
+                            }
+                        }
+
+                        break;
                     }
-                    k++;
+
                     if (!piece.King)
                     {
                         break;
                     }
+
+                    k++;
                 }
             }
-            if (!piece.King)
-            {
-                break;
-            }
         }
-        // if (piece.King)
-        // {
-        //     
-        // }
-        // else
-        // {
-        //     foreach (var j in new List<int> { -1, 1 })
-        //     {
-        //         if ((y == 0 && j == -1) || (y == _width - 1 && j == 1))
-        //         {
-        //             // проверяем, что не вышли за границы поля
-        //             continue;
-        //         }
-        //
-        //         var i = piece.PieceColor == Color.White ? -1 : 1;
-        //         if (_field[x + i][y + j].LinkedPiece == null)
-        //         {
-        //             result.Add(_field[x + i][y + j]);
-        //         } else if (x + 2*i >= 0 && x + 2*i < _height && y + 2*j >= 0 && y + 2*j < _width)
-        //         {
-        //             result.Add(_field[x + 2*i][y + 2*j]);
-        //         }
-        //     }
-        // }
         return result;
     }
 
     public void UpdateMoves()
     {
+        LegalMoves.Clear();
         foreach (var piece in _pieces.Where(piece => (int)piece.PieceColor == (int)_gameStatus))
         {
-            LegalMoves.Add(piece, GetAvailableMoves(piece));
+            var moves = GetAvailableMoves(piece);
+            if (moves.Count > 0)
+            {
+                LegalMoves.Add(piece, moves);
+            }
+        }
+        if (LegalMoves.Values.All(move => move.Values.All(capture => capture == null))) return;
+        // убираем все ходы не-взятия
+        foreach (var moves in LegalMoves)
+        {
+            if (moves.Value.Any(move => move.Value == null))
+            {
+                foreach (var move in moves.Value)
+                {
+                    if (move.Value == null)
+                    {
+                        moves.Value.Remove(move.Key);
+                    }
+                }
+
+                if (moves.Value.Count == 0)
+                {
+                    LegalMoves.Remove(moves.Key);
+                }
+            }
         }
     }
 
