@@ -47,8 +47,8 @@ public class Game
     {
         WhiteMove,
         BlackMove,
-        WhiteWin,
-        BlackWin,
+        WhiteVictory,
+        BlackVictory,
         Draw
     }
 
@@ -93,7 +93,23 @@ public class Game
     public void PassTheMove()
     {
         //TODO: проверить, не закончилась ли игра
+        // передаём ход сопернику
         _gameStatus = _gameStatus == GameStatus.WhiteMove ? GameStatus.BlackMove : GameStatus.WhiteMove;
+        UpdateMoves();
+        if (LegalMoves.Count > 0) return;  // если у него есть ходы, продолжаем игру
+        // если же нет, смотрим, есть ли ходы у нас
+        _gameStatus = _gameStatus == GameStatus.WhiteMove ? GameStatus.BlackMove : GameStatus.WhiteMove;
+        UpdateMoves();
+        if (LegalMoves.Count > 0)
+        {
+            // если есть, то мы выиграли
+            _gameStatus = _gameStatus == GameStatus.WhiteMove ? GameStatus.WhiteVictory : GameStatus.BlackVictory;
+        }
+        else
+        {
+            // если и у нас нет ходов, то на доске ничья
+            _gameStatus = GameStatus.Draw;
+        }
     }
 
     private Dictionary<Cell, Piece?> GetAvailableMoves(Piece piece)
@@ -174,25 +190,17 @@ public class Game
         }
         if (LegalMoves.Values.All(move => move.Values.All(capture => capture == null))) return;
         // убираем все ходы не-взятия
-        foreach (var moves in LegalMoves)
+        foreach (var (piece, value) in LegalMoves.Where(moves => moves.Value.Any(move => move.Value == null)))
         {
-            if (moves.Value.Any(move => move.Value == null))
+            foreach (var move in value.Where(move => move.Value == null))
             {
-                foreach (var move in moves.Value)
-                {
-                    if (move.Value == null)
-                    {
-                        moves.Value.Remove(move.Key);
-                    }
-                }
+                value.Remove(move.Key);
+            }
 
-                if (moves.Value.Count == 0)
-                {
-                    LegalMoves.Remove(moves.Key);
-                }
+            if (value.Count == 0)
+            {
+                LegalMoves.Remove(piece);
             }
         }
     }
-
-    // private List<Pair<int, int>> 
 }

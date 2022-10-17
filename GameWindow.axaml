@@ -6,20 +6,20 @@
         x:Class="checkers.GameWindow"
         x:Name="Window"
         Title="GameWindow">
-    <WrapPanel>
+    <RelativePanel x:Name="Screen">
         <Canvas x:Name="CanvasDrag"
-                    Margin="250,30">
-                <Border HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        BorderBrush="Black"
-                        BorderThickness="2"
-                        CornerRadius="3">
-                    <Grid x:Name="Field"
-                          ColumnDefinitions="100,100,100,100,100,100,100,100"
-                          RowDefinitions="100,100,100,100,100,100,100,100">
-                    </Grid>
-                </Border>
-            </Canvas>
-    </WrapPanel>
+                Margin="250,30">
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderBrush="Black"
+                    BorderThickness="2"
+                    CornerRadius="3">
+                <Grid x:Name="Field"
+                      ColumnDefinitions="100,100,100,100,100,100,100,100"
+                      RowDefinitions="100,100,100,100,100,100,100,100">
+                </Grid>
+            </Border>
+        </Canvas>
+    </RelativePanel>
     
 </Window>

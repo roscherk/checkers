@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
@@ -16,6 +17,7 @@ public partial class GameWindow : Window
 {
     private Grid _fieldImage = null!;
     private Canvas _canvas = null!;
+    private RelativePanel _screen = null!;
     private readonly Game _game;
     private const int FieldHeight = 8;
     private const int FieldWidth = 8;
@@ -29,6 +31,7 @@ public partial class GameWindow : Window
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+        _screen = this.Find<RelativePanel>("Screen");
         _canvas = this.Find<Canvas>("CanvasDrag");
         _fieldImage = this.Find<Grid>("Field");
         _fieldImage.AddHandler(Avalonia.Input.DragDrop.DropEvent, DragDrop);
@@ -164,8 +167,28 @@ public partial class GameWindow : Window
         }
         // если продолжения нету, передаём ход
         _game.PassTheMove();
-        _game.UpdateMoves();
-
+        if (_game.GetStatus() is Game.GameStatus.WhiteMove or Game.GameStatus.BlackMove) return;
+        //TODO: сделать статус-бар и написать сообщение о победе в него
+        var gameResultBorder = new Border
+        {
+            BorderBrush = SolidColorBrush.Parse("Black"),
+            BorderThickness = Avalonia.Thickness.Parse("1"),
+            Background = SolidColorBrush.Parse("AntiqueWhite"),
+            CornerRadius = Avalonia.CornerRadius.Parse("3")
+        };
+        var gameResult = new TextBlock
+        {
+            Height = 40,
+            Width = 200,
+            // Background = SolidColorBrush.Parse("#4DA6FF"),
+            TextAlignment = TextAlignment.Center,
+            FontSize = 24,
+            Text = "Победа белых!"
+        };
+        gameResultBorder.Child = gameResult;
+        _screen.Children.Add(gameResultBorder);
+        RelativePanel.SetAlignHorizontalCenterWithPanel(gameResultBorder, true);
+        RelativePanel.SetAlignVerticalCenterWithPanel(gameResultBorder, true);
         Console.WriteLine($"DragEnd, droped: Row {finishX} Column {finishY}");
     }
 
