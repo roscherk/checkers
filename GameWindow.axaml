@@ -4,19 +4,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="checkers.GameWindow"
+        x:Name="Window"
         Title="GameWindow">
-    <Canvas x:Name="CanvasDrag"
-            Margin="250,30">
-        <Border HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                BorderBrush="Black"
-                BorderThickness="2"
-                CornerRadius="3">
-                <Grid x:Name="Field"
-                      ColumnDefinitions="100,100,100,100,100,100,100,100"
-                      RowDefinitions="100,100,100,100,100,100,100,100">
-                </Grid>
-            </Border>
-    </Canvas>
+    <WrapPanel>
+        <Canvas x:Name="CanvasDrag"
+                    Margin="250,30">
+                <Border HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        BorderBrush="Black"
+                        BorderThickness="2"
+                        CornerRadius="3">
+                    <Grid x:Name="Field"
+                          ColumnDefinitions="100,100,100,100,100,100,100,100"
+                          RowDefinitions="100,100,100,100,100,100,100,100">
+                    </Grid>
+                </Border>
+            </Canvas>
+    </WrapPanel>
     
 </Window>
