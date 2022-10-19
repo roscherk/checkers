@@ -14,7 +14,6 @@ namespace checkers
         {
             var gameWindow = new GameWindow();
             gameWindow.Show();
-            this.Close();
         }
     }
 }

@@ -7,7 +7,7 @@
         Title="checkers">
     
     <!-- Add button to window -->
-    <Button Name="Button"
+    <Button Name="NewGameButton"
             Click="button_Click"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">

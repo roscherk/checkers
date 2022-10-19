@@ -92,7 +92,6 @@ public class Game
     }
     public void PassTheMove()
     {
-        //TODO: проверить, не закончилась ли игра
         // передаём ход сопернику
         _gameStatus = _gameStatus == GameStatus.WhiteMove ? GameStatus.BlackMove : GameStatus.WhiteMove;
         UpdateMoves();
