@@ -35,12 +35,15 @@ public class Game
             Y = y;
             PieceColor = pieceColor;
             King = king;
+            MovingUp = pieceColor == Color.White;
         }
 
         public int X { get; set; }
         public int Y { get; set; }
         public Color PieceColor { get; private set; }
         public bool King { get; set; }
+        
+        public bool MovingUp { get; set; }
     }
 
     public enum GameStatus
@@ -52,8 +55,10 @@ public class Game
         Draw
     }
 
-    public readonly Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves = new Dictionary<Piece, Dictionary<Cell, Piece?>>();
+    public readonly Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves =
+        new Dictionary<Piece, Dictionary<Cell, Piece?>>();
     private readonly List<List<Cell>> _field = new List<List<Cell>>();
+    public bool BoardFlipped = false;
     private readonly List<Piece> _pieces = new List<Piece>();
     private readonly int _height;
     private readonly int _width;
@@ -139,8 +144,8 @@ public class Game
                     {
                         // если клетка пустая, мы можем на неё сходить
                         if (piece.King
-                            || (piece.PieceColor == Color.White && i == -1)
-                            || (piece.PieceColor == Color.Black && i == 1))
+                            || (piece.MovingUp && i == -1)
+                            || (!piece.MovingUp && i == 1))
                         {
                             result.Add(_field[x + k*i][y + k*j], null);
                         }

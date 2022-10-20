@@ -5,12 +5,48 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="checkers.MainWindow"
         Title="checkers">
-    
-    <!-- Add button to window -->
-    <Button Name="NewGameButton"
-            Click="button_Click"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-        New Game
-    </Button>
+    <Window.Styles>
+        <Style Selector="Image.Animatable:pointerover">
+            <Style.Animations>
+                <Animation Duration="0:0:2"
+                           FillMode="None"
+                           IterationCount="1"> 
+                    <KeyFrame Cue="0%">
+                        <Setter Property="RotateTransform.Angle" Value="3600"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Width" Value="200"></Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
+    <RelativePanel>
+        <Image x:Name="MainMenuImage"
+               Classes="Animatable"
+               RelativePanel.AlignHorizontalCenterWithPanel="True"
+               Source="Assets/main_menu_image.png"
+               Width="512"
+               Height="512"
+               PointerEnter="MainMenuImage_OnPointerEnter"/>
+        
+        <Button x:Name="NewGameButton"
+                RelativePanel.Below="MainMenuImage"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                Click="button_Click"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            Новая игра
+        </Button>
+        <Button x:Name="SettingsButton"
+                RelativePanel.Below="NewGameButton"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                Click="button_Click"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                PointerEnter="SettingsButton_OnPointerEnter"
+                PointerLeave="SettingsButton_OnPointerLeave">
+            Настройки
+        </Button>
+    </RelativePanel>
 </Window>

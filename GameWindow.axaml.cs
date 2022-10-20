@@ -8,6 +8,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
+using NetCoreAudio;
 using Bitmap = Avalonia.Media.Imaging.Bitmap;
 using Image = Avalonia.Controls.Image;
 
@@ -176,6 +177,8 @@ public partial class GameWindow : Window
         // проверяем, что ход возможен
         if (!_game.LegalMoves[linkedPiece].Keys.Contains(_game.GetCell(finishX, finishY))) return;
 
+        PlaySound("../../../Assets/move_sound.mp3");
+
         // обрабатываем взятие
         var capturedPiece = _game.LegalMoves[linkedPiece][_game.GetCell(finishX, finishY)];
         if (capturedPiece != null)
@@ -268,7 +271,7 @@ public partial class GameWindow : Window
         DisplayGameStatus();
         DisplayMoveHistory(streak: streak);
     }
-    
+
     private void PieceMouseOver(object? sender, PointerEventArgs e)
     {
         var pieceImage = (Image)sender!;
@@ -333,10 +336,16 @@ public partial class GameWindow : Window
             var piece = _lastMove.First;
             var cell = _lastMove.Second.First;
             var capturedPiece = _lastMove.Second.Second;
-            // var (piece, (cell, capturedPiece)) = _lastMove;  // ругается на possible null reference
+            int Flip(int y) => _game.BoardFlipped ? 7 - y : y;
+            var moveStartLetter = (char)('a' + Flip(piece.Y));
+            var moveStartInt = 1 + Flip(7 - piece.X);
+            var moveEndLetter = (char)('a' + Flip(cell.Y));
+            var moveEndInt = 1 + Flip(7 - cell.X);
+            
             if (streak)
             {
-                _moveHistoryDisplay.Text += $":{(char)(cell.Y + 97)}{8 - cell.X}";
+                
+                _moveHistoryDisplay.Text += $":{moveEndLetter}{moveEndInt}";
                 return;
             }
 
@@ -347,14 +356,14 @@ public partial class GameWindow : Window
                     : _moveHistoryDisplay.Text;
                 _moveHistoryDisplay.Text = "...";
             }
-
+            
             _moveHistoryDisplay.Text += piece.PieceColor switch
             {
                 Game.Color.White =>
-                    $"{(++_moveCount > 1 ? '\n' : "")}{_moveCount}. {(char)(piece.Y + 97)}{8 - piece.X}"
-                    + $"{(capturedPiece == null ? '-' : ':')}{(char)(cell.Y + 97)}{8 - cell.X}",
-                Game.Color.Black => $" {(char)(piece.Y + 97)}{8 - piece.X}{(capturedPiece == null ? '-' : ':')}" +
-                                    $"{(char)(cell.Y + 97)}{8 - cell.X}",
+                    $"{(++_moveCount > 1 ? '\n' : "")}{_moveCount}. {moveStartLetter}{moveStartInt}"
+                    + $"{(capturedPiece == null ? '-' : ':')}{moveEndLetter}{moveEndInt}",
+                Game.Color.Black => $" {moveStartLetter}{moveStartInt}{(capturedPiece == null ? '-' : ':')}" +
+                                    $"{moveEndLetter}{moveEndInt}",
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -372,7 +381,9 @@ public partial class GameWindow : Window
         _moveHistory += _moveHistoryDisplay.Text.StartsWith("...") ? _moveHistoryDisplay.Text[3..] : _moveHistoryDisplay.Text;
     }
 
-    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    // ReSharper disable once UnusedParameter.Local
+
+    private void Button_OnClick(object? sender, RoutedEventArgs _)
     {
         if (sender == null) return;
         var button = (Button)sender;
@@ -402,6 +413,30 @@ public partial class GameWindow : Window
                 DisplayMoveHistory(byAgreement: true);
                 break;
             case "FlipBoardButton":
+                PlaySound("../../../Assets/rotating_sound2.mp3");
+                _game.BoardFlipped = !_game.BoardFlipped;
+                foreach (var piece in _game.GetPieces())
+                {
+                    var pieceImage = GetPieceImage(piece);
+                    var finishX = 7 - piece.X;
+                    var finishY = 7 - piece.Y;
+                    // меняем координаты шашки в массиве
+                    piece.MovingUp = !piece.MovingUp;
+                    if (_game.GetCell(piece.X, piece.Y).LinkedPiece!.PieceColor == piece.PieceColor
+                        && _game.GetCell(piece.X, piece.Y).LinkedPiece!.King == piece.King)
+                    {
+                        _game.GetCell(piece.X, piece.Y).LinkedPiece = null;
+                    }
+                    (piece.X, piece.Y) = (finishX, finishY);
+                    _game.GetCell(finishX, finishY).LinkedPiece = piece;
+
+                    // меняем положение шашки на экране
+                    _fieldImage.Children.Remove(pieceImage);
+                    Grid.SetRow(pieceImage, finishX);
+                    Grid.SetColumn(pieceImage, finishY);
+                    _fieldImage.Children.Add(pieceImage);
+                }
+                _game.UpdateMoves();
                 break;
             case "CopyHistoryButton":
                 textBlock.Text = "Скопировано в буфер обмена!";
@@ -411,5 +446,11 @@ public partial class GameWindow : Window
                 Close();
                 break;
         }
+    }
+
+    private static void PlaySound(string path)
+    {
+        var player = new Player();
+        player.Play(path);
     }
 }
