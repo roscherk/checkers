@@ -52,7 +52,7 @@ public class Game
         Draw
     }
 
-    public Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves = new Dictionary<Piece, Dictionary<Cell, Piece?>>();
+    public readonly Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves = new Dictionary<Piece, Dictionary<Cell, Piece?>>();
     private readonly List<List<Cell>> _field = new List<List<Cell>>();
     private readonly List<Piece> _pieces = new List<Piece>();
     private readonly int _height;
@@ -90,6 +90,16 @@ public class Game
     {
         return _gameStatus;
     }
+
+    public void MakeDraw()
+    {
+        _gameStatus = GameStatus.Draw;
+    }
+
+    public void Concede()
+    {
+        _gameStatus = _gameStatus == GameStatus.WhiteMove ? GameStatus.BlackVictory : GameStatus.WhiteVictory;
+    }
     public void PassTheMove()
     {
         // передаём ход сопернику
@@ -109,6 +119,7 @@ public class Game
             // если и у нас нет ходов, то на доске ничья
             _gameStatus = GameStatus.Draw;
         }
+        LegalMoves.Clear();
     }
 
     private Dictionary<Cell, Piece?> GetAvailableMoves(Piece piece)
@@ -119,11 +130,6 @@ public class Game
         
         foreach (var i in new List<int> { -1, 1 })  // задаёт направление хода: -1 -- вверх, 1 -- вниз
         {
-            // if (piece.PieceColor == Color.Black && i == -1 && !piece.King)
-            // {
-            //     continue;
-            // }
-            
             foreach (var j in new List<int> { -1, 1 })  // задаёт направление хода: -1 -- влево, 1 -- вправо
             {
                 var k = 1;  // перебираем количество клеток, на которое можем пойти в выбранном направлении
@@ -141,7 +147,6 @@ public class Game
                     } else if (_field[x + k*i][y + k*j].LinkedPiece!.PieceColor != piece.PieceColor)
                     {
                         var t = 1;  // перебираем возможные варианты взятия
-                        //TODO: пофиксить баг со взятием только в одну сторону
                         while (x + (k + t) * i >= 0 
                                && x + (k + t) * i < _height
                                && y + (k + t) * j >= 0

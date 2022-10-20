@@ -5,28 +5,29 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="checkers.GameWindow"
         x:Name="Window"
-        Title="GameWindow">
-    <!-- <Window.Styles> -->
-    <!--     <Style Selector="Image.Piece:pointerover"> -->
-    <!--         <Setter Property="RenderTransform" Value="translateY(-1px)"/> -->
-    <!--         ~1~ <Style.Animations> @1@ -->
-    <!--         ~1~     <Animation Duration="0:0:1"> @1@ -->
-    <!--         ~1~         <KeyFrame Cue="100%"> @1@ -->
-    <!--         ~1~             <Setter Property="Opacity" Value="0.5"/> @1@ -->
-    <!--         ~1~         </KeyFrame> @1@ -->
-    <!--         ~1~     </Animation> @1@ -->
-    <!--         ~1~ </Style.Animations> @1@ -->
-    <!--     </Style> -->
-    <!-- </Window.Styles> -->
+        Title="GameWindow"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent">
+    
+    <Window.Styles>
+        <Style Selector="Button.InGameButton">
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Margin" Value="50, 10, 0, 10"/>
+            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+        </Style>
+    </Window.Styles>
+    
     <RelativePanel x:Name="Screen">
         <Border x:Name="CapturedByBlackBorder"
+                RelativePanel.AlignTopWith="CanvasDrag"
                 Width="205"
                 Height="255"
                 Margin="25,30"
                 BorderBrush="Black"
                 BorderThickness="2"
                 CornerRadius="2">
-            <Canvas x:Name="CapturedByBlack"/>
+            <Canvas x:Name="CapturedByBlack" />
         </Border>
         <Border x:Name="StatusBorder"
                 RelativePanel.Below="CapturedByBlackBorder"
@@ -36,21 +37,28 @@
                 Margin="25,100"
                 BorderBrush="Black"
                 BorderThickness="2"
-                CornerRadius="2"><TextBlock x:Name="GameStatus" Text="Ход белых" FontSize="22" TextAlignment="Center"/>
+                CornerRadius="2">
+            <TextBlock x:Name="GameStatus"
+                       Text="Ход белых"
+                       FontSize="22"
+                       TextAlignment="Center" />
         </Border>
         <Border x:Name="CapturedByWhiteBorder"
                 RelativePanel.Below="StatusBorder"
+                RelativePanel.AlignBottomWith="CanvasDrag"
                 Width="205"
                 Height="255"
-                Margin="25,29"
+                Margin="25, 0"
                 BorderBrush="Black"
                 BorderThickness="2"
                 CornerRadius="2">
-            <Canvas x:Name="CapturedByWhite"/>
+            <Canvas x:Name="CapturedByWhite" />
         </Border>
-        
+
         <Canvas x:Name="CanvasDrag"
-                Margin="250,30">
+                Width="800"
+                Height="800"
+                Margin="250,30, 0, 30">
             <Border HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     BorderBrush="Black"
@@ -62,6 +70,66 @@
                 </Grid>
             </Border>
         </Canvas>
+
+        <Border x:Name="MovesHistoryBorder"
+                RelativePanel.RightOf="CanvasDrag"
+                RelativePanel.AlignTopWith="CanvasDrag"
+                Width="345"
+                Height="400"
+                Margin="25, 30"
+                BorderBrush="Black"
+                BorderThickness="2"
+                CornerRadius="2">
+            <TextBlock x:Name="MoveHistory"
+                       FontSize="14"
+                       TextAlignment="Left" />
+        </Border>
+        <Button x:Name="OfferDrawButton"
+                Classes="InGameButton"
+                RelativePanel.Below="MovesHistoryBorder"
+                RelativePanel.RightOf="CanvasDrag"
+                Click="Button_OnClick">
+            <TextBlock TextAlignment="Center">
+                Предложить ничью
+            </TextBlock>
+        </Button>
+        <Button x:Name="ConcedeButton"
+                Classes="InGameButton"
+                RelativePanel.Below="OfferDrawButton"
+                RelativePanel.RightOf="CanvasDrag"
+                Click="Button_OnClick">
+            <TextBlock TextAlignment="Center">
+                Сдаться
+            </TextBlock>
+        </Button>
+        <Button x:Name="FlipBoardButton"
+                Classes="InGameButton"
+                RelativePanel.Below="ConcedeButton"
+                RelativePanel.RightOf="CanvasDrag"
+                Click="Button_OnClick">
+            <TextBlock TextAlignment="Center">
+                Перевернуть доску
+            </TextBlock>
+        </Button>
+        <Button x:Name="CopyHistoryButton"
+                Classes="InGameButton"
+                RelativePanel.Below="FlipBoardButton"
+                RelativePanel.RightOf="CanvasDrag"
+                Click="Button_OnClick"
+                IsVisible="True">
+            <TextBlock TextAlignment="Center">
+                Скопировать историю игры
+            </TextBlock>
+        </Button>
+        <Button x:Name="ExitButton"
+                Classes="InGameButton"
+                RelativePanel.Below="CopyHistoryButton"
+                RelativePanel.RightOf="CanvasDrag"
+                Click="Button_OnClick"
+                IsVisible="True">
+            <TextBlock TextAlignment="Center">
+                Выход
+            </TextBlock>
+        </Button>
     </RelativePanel>
-    
 </Window>

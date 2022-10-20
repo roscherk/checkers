@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -18,8 +19,12 @@ public partial class GameWindow : Window
     private Canvas _canvas = null!;
     private Grid _fieldImage = null!;
     private TextBlock _statusBar = null!;
+    private TextBlock _moveHistoryDisplay = null!;
     private Pair<Canvas, Canvas> _capturedBox = null!;
     private readonly Game _game;
+    private readonly Pair<Game.Piece?, Pair<Game.Cell, Game.Piece?>?> _lastMove = new(null, null);
+    private int _moveCount;
+    private string _moveHistory = "";
     private const int FieldHeight = 8;
     private const int FieldWidth = 8;
 
@@ -36,6 +41,7 @@ public partial class GameWindow : Window
         _canvas = this.Find<Canvas>("CanvasDrag");
         _fieldImage = this.Find<Grid>("Field");
         _statusBar = this.Find<TextBlock>("GameStatus");
+        _moveHistoryDisplay = this.Find<TextBlock>("MoveHistory");
         _capturedBox = new Pair<Canvas, Canvas>(this.Find<Canvas>("CapturedByWhite"),
             this.Find<Canvas>("CapturedByBlack"));
         
@@ -96,7 +102,32 @@ public partial class GameWindow : Window
         
         if (!_game.LegalMoves.ContainsKey(linkedPiece))
         {
-            //TODO: добавить анимацию, показывающую невозможность хода
+            foreach (var availablePiece in _game.LegalMoves.Keys)
+            {
+                foreach (var element in _fieldImage.Children)
+                {
+                    if (!element.ToString()!.EndsWith("Border")
+                        || Grid.GetRow((Border)element) != availablePiece.X
+                        || Grid.GetColumn((Border)element) != availablePiece.Y) continue;
+                    var border = (Border)element;
+                    var animation = new Animation
+                    {
+                        Duration = TimeSpan.FromSeconds(0.8),
+                        Children =
+                        {
+                            new KeyFrame
+                            {
+                                Setters =
+                                {
+                                    new Setter(BackgroundProperty, SolidColorBrush.Parse("Green"))
+                                },
+                                Cue = new Cue(0)
+                            }
+                        }
+                    };
+                    animation.RunAsync(border, new Clock());
+                }
+            }
             return;
         }
         
@@ -104,8 +135,9 @@ public partial class GameWindow : Window
         var draggable = new Image
         {
             Name = gameStatus == Game.GameStatus.WhiteMove ? "Wdrag" : "Bdrag",
-            Source = new Bitmap(
-                $"../../../Assets/sprite_{(gameStatus == Game.GameStatus.WhiteMove ? "white" : "black")}{(linkedPiece.King ? "_king" : "")}.png"),
+            Source = new Bitmap($"../../../Assets/sprite_" +
+                                $"{(gameStatus == Game.GameStatus.WhiteMove ? "white" : "black")}" +
+                                $"{(linkedPiece.King ? "_king" : "")}.png"),
             Height = 100,
             Width = 100,
             IsEnabled = false,
@@ -115,7 +147,6 @@ public partial class GameWindow : Window
         
         var obj = new DataObject();
         obj.Set("Pair<Image image, Game.Piece piece>", new Pair<Image, Game.Piece>(piece, linkedPiece));
-        Console.WriteLine($"\nDragStart: {piece.Name}");
         var dragResult = await Avalonia.Input.DragDrop.DoDragDrop(e, obj, DragDropEffects.Move);
         
         // если что-то пошло не так во время перетаскивания, откатываемся до первоначального состояния
@@ -169,11 +200,9 @@ public partial class GameWindow : Window
             targetBox.Children.Add(capturedPieceImage);
             if (targetBox.Children.Count > 1)
             {
-                Console.WriteLine((int)targetBox.Children[^2].Bounds.Center.X);
                 var targetX = (int)targetBox.Children[^2].Bounds.Center.X < 150
                     ? (int)targetBox.Children[^2].Bounds.Center.X
                     : 0;
-                Console.WriteLine(targetX);
                 var targetY = (int)targetBox.Children[^2].Bounds.Center.X == 150 ?
                     (int)targetBox.Children[^2].Bounds.Center.Y
                     : (int)targetBox.Children[^2].Bounds.Center.Y - 50;
@@ -199,6 +228,11 @@ public partial class GameWindow : Window
             animation.RunAsync(capturedPieceImage, new Clock());
         }
         
+        // запоминаем ход в последний ход
+        var streak =_lastMove.First != null && linkedPiece.PieceColor == _lastMove.First.PieceColor;
+        _lastMove.First = new Game.Piece(linkedPiece.X, linkedPiece.Y, linkedPiece.PieceColor, linkedPiece.King);
+        _lastMove.Second = new Pair<Game.Cell, Game.Piece?>(new Game.Cell(finishX, finishY), capturedPiece);
+
         // меняем координаты шашки в массиве
         _game.GetCell(linkedPiece.X, linkedPiece.Y).LinkedPiece = null;
         (linkedPiece.X, linkedPiece.Y) = (finishX, finishY);
@@ -223,13 +257,16 @@ public partial class GameWindow : Window
         {
             _game.UpdateMoves();
             if (_game.LegalMoves.ContainsKey(linkedPiece)
-                && _game.LegalMoves[linkedPiece].Any(move => move.Value != null)) return;
+                && _game.LegalMoves[linkedPiece].Any(move => move.Value != null))
+            {
+                DisplayMoveHistory(streak: streak);
+                return;
+            }
         }
         // если продолжения нету, передаём ход
         _game.PassTheMove();
         DisplayGameStatus();
-        // if (_game.GetStatus() is Game.GameStatus.WhiteMove or Game.GameStatus.BlackMove) return;
-        Console.WriteLine($"DragEnd, droped: Row {finishX} Column {finishY}");
+        DisplayMoveHistory(streak: streak);
     }
     
     private void PieceMouseOver(object? sender, PointerEventArgs e)
@@ -240,7 +277,11 @@ public partial class GameWindow : Window
         var linkedPiece = _game.GetCell(x, y).LinkedPiece;
         if (linkedPiece == null) return;
         if (!_game.LegalMoves.ContainsKey(linkedPiece)) return;
-        foreach (var border in from move in _game.LegalMoves[linkedPiece] from element in _fieldImage.Children where element.ToString()!.EndsWith("Border") where Grid.GetRow((Border)element) == move.Key.X && Grid.GetColumn((Border)element) == move.Key.Y select (Border)element)
+        foreach (var border in from move in _game.LegalMoves[linkedPiece]
+                 from element in _fieldImage.Children
+                 where element.ToString()!.EndsWith("Border")
+                 where Grid.GetRow((Border)element) == move.Key.X && Grid.GetColumn((Border)element) == move.Key.Y
+                 select (Border)element)
         {
             border.BorderThickness = Thickness.Parse("4");
             border.BorderBrush = SolidColorBrush.Parse("Green");
@@ -282,5 +323,93 @@ public partial class GameWindow : Window
             Game.GameStatus.Draw => "Ничья!",
             _ => throw new ArgumentOutOfRangeException()
         };
+    }
+
+    private void DisplayMoveHistory(bool streak=false, bool byAgreement=false)
+    {
+        if (_lastMove.First == null || _lastMove.Second == null) return;
+        if (!byAgreement)
+        {
+            var piece = _lastMove.First;
+            var cell = _lastMove.Second.First;
+            var capturedPiece = _lastMove.Second.Second;
+            // var (piece, (cell, capturedPiece)) = _lastMove;  // ругается на possible null reference
+            if (streak)
+            {
+                _moveHistoryDisplay.Text += $":{(char)(cell.Y + 97)}{8 - cell.X}";
+                return;
+            }
+
+            if (_moveCount % 23 == 0 && _moveCount != 0 && piece.PieceColor == Game.Color.White)
+            {
+                _moveHistory += _moveHistoryDisplay.Text.StartsWith("...")
+                    ? _moveHistoryDisplay.Text[3..]
+                    : _moveHistoryDisplay.Text;
+                _moveHistoryDisplay.Text = "...";
+            }
+
+            _moveHistoryDisplay.Text += piece.PieceColor switch
+            {
+                Game.Color.White =>
+                    $"{(++_moveCount > 1 ? '\n' : "")}{_moveCount}. {(char)(piece.Y + 97)}{8 - piece.X}"
+                    + $"{(capturedPiece == null ? '-' : ':')}{(char)(cell.Y + 97)}{8 - cell.X}",
+                Game.Color.Black => $" {(char)(piece.Y + 97)}{8 - piece.X}{(capturedPiece == null ? '-' : ':')}" +
+                                    $"{(char)(cell.Y + 97)}{8 - cell.X}",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        if ((int)_game.GetStatus() <= 1) return;
+        _moveHistoryDisplay.Text += "\n" + _game.GetStatus() switch
+        {
+            Game.GameStatus.WhiteMove => throw new ArgumentOutOfRangeException(),
+            Game.GameStatus.BlackMove => throw new ArgumentOutOfRangeException(),
+            Game.GameStatus.WhiteVictory => "1 - 0",
+            Game.GameStatus.BlackVictory => "0 - 1",
+            Game.GameStatus.Draw => "0.5 - 0.5",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        _moveHistory += _moveHistoryDisplay.Text.StartsWith("...") ? _moveHistoryDisplay.Text[3..] : _moveHistoryDisplay.Text;
+    }
+
+    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender == null) return;
+        var button = (Button)sender;
+        var textBlock = (TextBlock)button.Content;
+        switch (button.Name)
+        {
+            case "OfferDrawButton":
+                if ((int)_game.GetStatus() > 1) return;
+                if (textBlock.Text == "Предложить ничью")
+                {
+                    textBlock.Text = "Согласиться на ничью?";
+                }
+                else
+                {
+                    textBlock.Text = "Ничья";
+                    _game.LegalMoves.Clear();
+                    _game.MakeDraw();
+                    DisplayGameStatus();
+                    DisplayMoveHistory(byAgreement: true);
+                }
+                break;
+            case "ConcedeButton":
+                if ((int)_game.GetStatus() > 1) return;
+                _game.LegalMoves.Clear();
+                _game.Concede();
+                DisplayGameStatus();
+                DisplayMoveHistory(byAgreement: true);
+                break;
+            case "FlipBoardButton":
+                break;
+            case "CopyHistoryButton":
+                textBlock.Text = "Скопировано в буфер обмена!";
+                Application.Current!.Clipboard!.SetTextAsync(_moveHistory);
+                break;
+            case "ExitButton":
+                Close();
+                break;
+        }
     }
 }
