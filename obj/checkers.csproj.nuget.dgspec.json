@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/heapof/CLionProjects/checkers/checkers.csproj": {}
+  },
+  "projects": {
+    "/home/heapof/CLionProjects/checkers/checkers.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/heapof/CLionProjects/checkers/checkers.csproj",
+        "projectName": "checkers",
+        "projectPath": "/home/heapof/CLionProjects/checkers/checkers.csproj",
+        "packagesPath": "/home/heapof/.nuget/packages/",
+        "outputPath": "/home/heapof/CLionProjects/checkers/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/heapof/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Avalonia": {
+              "target": "Package",
+              "version": "[0.10.18, )"
+            },
+            "Avalonia.Desktop": {
+              "target": "Package",
+              "version": "[0.10.18, )"
+            },
+            "Avalonia.Diagnostics": {
+              "target": "Package",
+              "version": "[0.10.18, )"
+            },
+            "NAudio": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "NetCoreAudio": {
+              "target": "Package",
+              "version": "[1.7.0, )"
+            },
+            "XamlNameReferenceGenerator": {
+              "target": "Package",
+              "version": "[1.3.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/dotnet6-6.0.110/sdk/6.0.110/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
