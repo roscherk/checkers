@@ -160,7 +160,6 @@ public class Game
                         {
                             t += 1;
                         }
-
                         t -= 1;  // последняя свободная клетка, в которую ещё можем попасть после взятия
                         for (var m = 1; m <= t; ++m)
                         {
@@ -170,7 +169,6 @@ public class Game
                                 break;
                             }
                         }
-
                         break;
                     }
 
@@ -199,7 +197,8 @@ public class Game
         }
         if (LegalMoves.Values.All(move => move.Values.All(capture => capture == null))) return;
         // убираем все ходы не-взятия
-        foreach (var (piece, value) in LegalMoves.Where(moves => moves.Value.Any(move => move.Value == null)))
+        foreach (var (piece, value)
+                 in LegalMoves.Where(moves => moves.Value.Any(move => move.Value == null)))
         {
             foreach (var move in value.Where(move => move.Value == null))
             {

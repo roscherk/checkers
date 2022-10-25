@@ -14,7 +14,18 @@
             <Setter Property="Width" Value="300"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="Margin" Value="50, 10, 0, 10"/>
-            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.InGameButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderThickness" Value="3" />
+            <Setter Property="BorderBrush" Value="Black" />
         </Style>
     </Window.Styles>
     
