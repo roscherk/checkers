@@ -55,11 +55,10 @@ public class Game
         Draw
     }
 
-    public readonly Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves =
-        new Dictionary<Piece, Dictionary<Cell, Piece?>>();
-    private readonly List<List<Cell>> _field = new List<List<Cell>>();
+    public readonly Dictionary<Piece, Dictionary<Cell, Piece?>> LegalMoves = new ();
+    private readonly List<List<Cell>> _field = new ();
     public bool BoardFlipped = false;
-    private readonly List<Piece> _pieces = new List<Piece>();
+    private readonly List<Piece> _pieces = new ();
     private readonly int _height;
     private readonly int _width;
     private GameStatus _gameStatus = GameStatus.WhiteMove;
@@ -143,9 +142,7 @@ public class Game
                     if (_field[x + k*i][y + k*j].LinkedPiece == null)
                     {
                         // если клетка пустая, мы можем на неё сходить
-                        if (piece.King
-                            || (piece.MovingUp && i == -1)
-                            || (!piece.MovingUp && i == 1))
+                        if (piece.King || (piece.MovingUp && i == -1) || (!piece.MovingUp && i == 1))
                         {
                             result.Add(_field[x + k*i][y + k*j], null);
                         }
@@ -169,6 +166,10 @@ public class Game
                                 break;
                             }
                         }
+                        break;
+                    }
+                    else
+                    {
                         break;
                     }
 

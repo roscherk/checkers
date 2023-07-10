@@ -156,10 +156,10 @@ public partial class GameWindow : Window
         piece.IsVisible = true;
         // проверяем, что ход возможен
         if (!_game.LegalMoves[linkedPiece].Keys.Contains(_game.GetCell(finishX, finishY))) return;
-        // добавляем "клик" к ходу
-        PlaySound("../../../Assets/move_sound.mp3");
         // обрабатываем взятие
         var capturedPiece = GetCapturedPiece(linkedPiece, finishX, finishY);
+        // добавляем звук к ходу
+        PlaySound(capturedPiece == null ? "../../../Assets/move_sound.mp3" : "../../../Assets/nom-nom.mp3");
         // перемещаем шашку в массиве и на экране
         var streak = HandlePiece(linkedPiece, capturedPiece, piece, finishX, finishY);
 
